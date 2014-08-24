@@ -208,7 +208,8 @@ module Ledis
         @cap   = @config[:cap]   || (2 ** 16)
         @step  = @config[:step]  || 0
         @cycle = @config[:cycle] || (2 ** 8)
-        @list  = @config[:list]  || 'ledis:log'
+        list_name = @config[:list]  || 'ledis:log'
+        @list  = "#{list_name}:#{Date.today.to_s}"
       end
 
       def redis
@@ -221,7 +222,7 @@ module Ledis
 
       def write(message)
         begin
-          redis.lpush(list, message)
+          redis.lpush("#{list}:#{Date.today.to_s}", message)
         rescue Object => e
           error = "#{ e.message } (#{ e.class })\n#{ Array(e.backtrace).join(10.chr) }"
           STDERR.puts(error)
