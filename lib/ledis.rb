@@ -222,7 +222,7 @@ module Ledis
 
       def write(message)
         begin
-          redis.lpush("#{list}:#{Date.today.to_s}", message)
+          redis.lpush(list, message)
         rescue Object => e
           error = "#{ e.message } (#{ e.class })\n#{ Array(e.backtrace).join(10.chr) }"
           STDERR.puts(error)
