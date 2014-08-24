@@ -1,62 +1,3 @@
-# -*- encoding : utf-8 -*-
-#
-# NAME
-#
-#   ledis
-#
-#  
-# SYNOPSIS
-#
-#   a K.I.S.S auto-rotating redis logger for ruby/rails
-#
-#   Ruby
-#  
-#     redis = Redis.new
-#    
-#     logger = Ledis.logger redis
-#  
-#     logger = Ledis.new
-#  
-#     logger = Ledis.new do |config|
-#
-#       config.redis = Redis.new
-#
-#       config.list = 'teh_foo:log'
-#
-#       config.cap = 2 ** 16
-#
-#     end
-#  
-#   Rails
-#  
-#     ### file: config/environments/development.rb
-#  
-#     config.logger = Ledis.logger do |logger|
-#  
-#       logger.list = "teh_rails_app:#{ Rails.env }:log"
-#  
-#     end
-#  
-#  
-# DESCRIPTION
-#
-#   ledis logs yo shiznit to redis.  it's got built in logic to auto-truncate
-#   logs when they get to big
-#
-#     logger.truncate(2 **16)
-#
-#   and to grab the most recent ones
-#
-#     puts logger.tail(1024)
-#
-#   it's list/line oriented, just like a log file and makes no attempt to
-#   annotated log lines or add fancy data structures to them
-#
-# INSTALL
-#
-#   gem 'ledis'
-#
-
 require 'logger'
 
 module Ledis
@@ -94,23 +35,7 @@ module Ledis
 #
   class << Ledis
     def logger(*args, &block)
-      return rails_logger(*args, &block) if defined?(::Rails.application)
-
       Logger.new(*args, &block)
-    end
-
-    def rails_logger(*args, &block)
-      config = ::Rails.application.config
-
-      logger = Logger.new(*args, &block)
-
-      if defined?(::ActiveSupport::TaggedLogging)
-        logger = ::ActiveSupport::TaggedLogging.new(logger)
-      end
-
-      logger.level = config.log_level
-
-      logger
     end
   end
 
