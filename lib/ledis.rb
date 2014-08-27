@@ -133,10 +133,13 @@ module Ledis
         @cap   = @config[:cap]   || (2 ** 16)
         @step  = @config[:step]  || 0
         @cycle = @config[:cycle] || (2 ** 8)
-        list_name = @config[:list]  || 'ledis:log'
-        @list  = "#{list_name}:#{Date.today.to_s}"
+        @list_name  = @config[:list]  || 'ledis:log'
       end
 
+      def list *args, &block
+        "#{@list_name}:#{Date.today.to_s}"
+      end
+      
       def redis
         @redis ||= Redis.new
       end
